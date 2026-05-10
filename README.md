@@ -66,7 +66,7 @@ uv run ruff check .
 
 ## Limitations
 
-- `get_page` returns intro plain text only; full wikitext (`prop=revisions`, `action=parse`, `?action=raw`) is rejected by Moegirl Wiki for anonymous callers.
+- `get_page` returns intro plain text only. Full wikitext (`prop=revisions`, `action=parse`, `?action=raw`) is blocked by Moegirl Wiki's site-wide ACL for all non-privileged user groups — empirically verified that bot-password login does **not** unlock it; only `sysop`/staff groups can call these actions.
 - Uses the `mzh.moegirl.org.cn` mirror.
 
 ## License

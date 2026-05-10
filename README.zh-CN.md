@@ -66,7 +66,7 @@ uv run ruff check .
 
 ## 限制
 
-- `get_page` 仅返回开篇段落纯文本；完整 wikitext（`prop=revisions`、`action=parse`、`?action=raw`）匿名访问会被萌娘百科直接拒绝。
+- `get_page` 仅返回开篇段落纯文本。完整 wikitext（`prop=revisions`、`action=parse`、`?action=raw`）被萌娘百科站点级 ACL 屏蔽给所有非特权用户组——实测 bot password 登录**也无法解锁**，只有 `sysop`/员工组可以调用这些 action。
 - 使用 `mzh.moegirl.org.cn` 镜像。
 
 ## 许可证
