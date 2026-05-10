@@ -21,9 +21,9 @@ pip install mcp-server-moegirl-wiki
 
 Returns `{"results": [{"title", "url", "snippet"}, ...], "count": int}`.
 
-### `get_page(title: str, max_length: int = 1500)`
+### `get_page(title: str, max_length: int = 6250)`
 
-Returns `{"title", "content", "url", "page_id"}` — full plain-text rendering of the page (all sections, templates expanded, links resolved). Auto-follows redirects. `content` is truncated to `max_length` characters; pass a larger value (e.g. 8000) for in-depth queries.
+Returns `{"title", "content", "url", "page_id"}` — full plain-text rendering of the page (all sections, templates expanded, links resolved). Auto-follows redirects. `content` is truncated to `max_length` characters; default 6250 covers a typical character page in full, pass larger (e.g. 20000) for very long pages.
 
 ## Configuration
 

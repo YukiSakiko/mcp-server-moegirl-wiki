@@ -21,9 +21,9 @@ pip install mcp-server-moegirl-wiki
 
 返回 `{"results": [{"title", "url", "snippet"}, ...], "count": int}`。
 
-### `get_page(title: str, max_length: int = 1500)`
+### `get_page(title: str, max_length: int = 6250)`
 
-返回 `{"title", "content", "url", "page_id"}`——条目纯文本全文（所有章节、模板已展开、链接已解析），自动跟随重定向。`content` 按 `max_length` 字符截断；深度查询时传更大值（如 8000）。
+返回 `{"title", "content", "url", "page_id"}`——条目纯文本全文（所有章节、模板已展开、链接已解析），自动跟随重定向。`content` 按 `max_length` 字符截断，默认 6250 通常足以覆盖一个角色页面全文；超长页面传更大值（如 20000）。
 
 ## 配置
 
