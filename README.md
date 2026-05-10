@@ -48,41 +48,13 @@ Returns `{"title", "content", "url", "page_id"}` — full plain-text rendering o
 
 ### MaiBot (`config/bot_config.toml`)
 
-Replace the existing `[mcp]` block (or add it if you don't have one) — copy-paste-ready, all required fields included:
+MaiBot's default config already has the `[mcp]` block — just replace the `servers` line:
 
 ```toml
-[mcp]
-enable = true
-servers = [
-  {name = "moegirl", enabled = true, transport = "stdio",
-   command = "uvx", args = ["mcp-server-moegirl-wiki"],
-   env = {MOEGIRL_MAX_LENGTH = "6250"},
-   url = "", headers = {},
-   http_timeout_seconds = 30.0, read_timeout_seconds = 300.0,
-   authorization = {mode = "none", bearer_token = ""}},
-]
-
-[mcp.client]
-client_name = "MaiBot"
-client_version = "1.0.0"
-
-[mcp.client.roots]
-enable = false
-items = []
-
-[mcp.client.sampling]
-enable = false
-task_name = "planner"
-include_context_support = false
-tool_support = false
-
-[mcp.client.elicitation]
-enable = false
-allow_form = true
-allow_url = false
+servers = [{name = "moegirl", enabled = true, transport = "stdio", command = "uvx", args = ["mcp-server-moegirl-wiki"], env = {MOEGIRL_MAX_LENGTH = "6250"}, url = "", headers = {}, http_timeout_seconds = 30.0, read_timeout_seconds = 300.0, authorization = {mode = "none", bearer_token = ""}}]
 ```
 
-Tweak `MOEGIRL_MAX_LENGTH` to taste (default `6250` covers a typical character page; raise to `20000` for very long pages, lower to `1500` for quick lookups). Restart MaiBot after editing. If `uvx` is not on `PATH`, replace `command = "uvx", args = ["mcp-server-moegirl-wiki"]` with `command = "pipx", args = ["run", "mcp-server-moegirl-wiki"]` or any other invocation that produces the binary.
+Tweak `MOEGIRL_MAX_LENGTH` to taste (raise to `20000` for very long pages, lower to `1500` for quick lookups). If `uvx` is not on `PATH`, swap `command`/`args` for `command = "pipx", args = ["run", "mcp-server-moegirl-wiki"]`.
 
 ## Development
 

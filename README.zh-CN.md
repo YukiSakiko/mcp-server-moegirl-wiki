@@ -48,41 +48,13 @@ pip install mcp-server-moegirl-wiki
 
 ### MaiBot (`config/bot_config.toml`)
 
-直接复制粘贴整个 `[mcp]` 块（替换你现有的，或者首次配置时新增），必填字段都齐了：
+MaiBot 的默认配置里已经有 `[mcp]` 块了——只要替换 `servers` 那一行：
 
 ```toml
-[mcp]
-enable = true
-servers = [
-  {name = "moegirl", enabled = true, transport = "stdio",
-   command = "uvx", args = ["mcp-server-moegirl-wiki"],
-   env = {MOEGIRL_MAX_LENGTH = "6250"},
-   url = "", headers = {},
-   http_timeout_seconds = 30.0, read_timeout_seconds = 300.0,
-   authorization = {mode = "none", bearer_token = ""}},
-]
-
-[mcp.client]
-client_name = "MaiBot"
-client_version = "1.0.0"
-
-[mcp.client.roots]
-enable = false
-items = []
-
-[mcp.client.sampling]
-enable = false
-task_name = "planner"
-include_context_support = false
-tool_support = false
-
-[mcp.client.elicitation]
-enable = false
-allow_form = true
-allow_url = false
+servers = [{name = "moegirl", enabled = true, transport = "stdio", command = "uvx", args = ["mcp-server-moegirl-wiki"], env = {MOEGIRL_MAX_LENGTH = "6250"}, url = "", headers = {}, http_timeout_seconds = 30.0, read_timeout_seconds = 300.0, authorization = {mode = "none", bearer_token = ""}}]
 ```
 
-按需调整 `MOEGIRL_MAX_LENGTH`（默认 `6250` 覆盖典型角色页全文；超长条目调 `20000`，只要摘要调 `1500`）。改完重启 MaiBot 生效。如果 `uvx` 不在 `PATH` 上，把 `command = "uvx", args = ["mcp-server-moegirl-wiki"]` 换成 `command = "pipx", args = ["run", "mcp-server-moegirl-wiki"]`，或任何能拉起 binary 的调用都行。
+按需改 `MOEGIRL_MAX_LENGTH`（超长条目调 `20000`，只要摘要调 `1500`）。如果 `uvx` 不在 `PATH` 上，把 `command`/`args` 换成 `command = "pipx", args = ["run", "mcp-server-moegirl-wiki"]`。
 
 ## 开发
 
