@@ -66,7 +66,7 @@ uv run ruff check .
 
 ## Limitations
 
-- Anonymous access only. `get_page` returns the intro section only — full wikitext requires login.
+- `get_page` returns intro plain text only; full wikitext (`prop=revisions`, `action=parse`, `?action=raw`) is rejected by Moegirl Wiki for anonymous callers.
 - Uses the `mzh.moegirl.org.cn` mirror.
 
 ## License
