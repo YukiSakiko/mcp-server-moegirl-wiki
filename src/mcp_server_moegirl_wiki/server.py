@@ -5,10 +5,15 @@ This module configures logging to stderr **before** importing FastMCP so any
 stray log records cannot pollute the protocol stream. Tool names and parameter
 shapes intentionally match the abandoned npm package ``moegirl-wiki-mcp`` so
 existing client prompts and configurations work as drop-in replacements.
+
+Environment variables:
+    MOEGIRL_MAX_LENGTH  Default truncation length for ``get_page`` content
+                        (positive integer; falls back to 6250 if unset/invalid).
 """
 from __future__ import annotations
 
 import logging
+import os
 import sys
 
 logging.basicConfig(
@@ -22,6 +27,25 @@ from mcp.server.fastmcp import FastMCP  # noqa: E402  — must follow logging.ba
 from .client import MoegirlApiClient  # noqa: E402
 
 logger = logging.getLogger("mcp-server-moegirl-wiki")
+
+
+def _default_max_length() -> int:
+    """Read ``MOEGIRL_MAX_LENGTH`` from env, fall back to 6250 on missing/invalid."""
+    raw = os.environ.get("MOEGIRL_MAX_LENGTH", "").strip()
+    if not raw:
+        return 6250
+    try:
+        n = int(raw)
+    except ValueError:
+        logger.warning("MOEGIRL_MAX_LENGTH=%r is not a valid integer, using 6250", raw)
+        return 6250
+    if n <= 0:
+        logger.warning("MOEGIRL_MAX_LENGTH=%d is not positive, using 6250", n)
+        return 6250
+    return n
+
+
+DEFAULT_MAX_LENGTH = _default_max_length()
 mcp: FastMCP = FastMCP("moegirl-wiki")
 _client = MoegirlApiClient()
 
@@ -68,14 +92,15 @@ async def search_moegirl(keyword: str, limit: int = 5) -> dict:
 @mcp.tool(
     description="获取萌娘百科条目的纯文本全文（所有章节、模板已展开、链接已解析、自动跟随重定向、按 max_length 截断）。"
 )
-async def get_page(title: str, max_length: int = 6250) -> dict:
+async def get_page(title: str, max_length: int = DEFAULT_MAX_LENGTH) -> dict:
     """Fetch the plain-text rendering of a Moegirl Wiki page (all sections).
 
     Args:
         title: Page title.
-        max_length: Maximum characters returned in ``content`` (default 6250,
-            roughly covers a typical character page in full). Pass larger
-            (e.g. 20000) for very long pages; smaller for quick lookups.
+        max_length: Maximum characters returned in ``content``. Default comes
+            from ``MOEGIRL_MAX_LENGTH`` env var (or 6250 if unset). 6250 covers
+            a typical character page in full; pass larger (e.g. 20000) for very
+            long pages, smaller for quick lookups.
 
     Returns:
         On success: ``{"title", "content", "url", "page_id"}``.

@@ -22,7 +22,7 @@ import httpx
 
 API_BASE = "https://mzh.moegirl.org.cn/api.php"
 PAGE_BASE = "https://mzh.moegirl.org.cn/"
-USER_AGENT = "mcp-server-moegirl-wiki/0.2.1 (+https://github.com/XXXxx7258/mcp-server-moegirl-wiki)"
+USER_AGENT = "mcp-server-moegirl-wiki/0.2.2 (+https://github.com/XXXxx7258/mcp-server-moegirl-wiki)"
 DEFAULT_TIMEOUT = 10.0
 
 

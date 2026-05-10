@@ -25,6 +25,12 @@ pip install mcp-server-moegirl-wiki
 
 返回 `{"title", "content", "url", "page_id"}`——条目纯文本全文（所有章节、模板已展开、链接已解析），自动跟随重定向。`content` 按 `max_length` 字符截断，默认 6250 通常足以覆盖一个角色页面全文；超长页面传更大值（如 20000）。
 
+## 环境变量
+
+| 变量 | 默认值 | 说明 |
+|---|---|---|
+| `MOEGIRL_MAX_LENGTH` | `6250` | `get_page` 调用方未指定 `max_length` 时使用的默认值。无需 fork 包即可按部署调整；非正整数将被忽略并打告警。|
+
 ## 配置
 
 ### Claude Desktop

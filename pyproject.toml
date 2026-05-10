@@ -1,6 +1,6 @@
 [project]
 name = "mcp-server-moegirl-wiki"
-version = "0.2.1"
+version = "0.2.2"
 description = "MCP server for Moegirl Wiki (萌娘百科) — search entries and fetch page summaries via the MediaWiki API."
 readme = "README.md"
 license = "MIT"

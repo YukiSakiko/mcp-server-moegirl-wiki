@@ -25,6 +25,12 @@ Returns `{"results": [{"title", "url", "snippet"}, ...], "count": int}`.
 
 Returns `{"title", "content", "url", "page_id"}` — full plain-text rendering of the page (all sections, templates expanded, links resolved). Auto-follows redirects. `content` is truncated to `max_length` characters; default 6250 covers a typical character page in full, pass larger (e.g. 20000) for very long pages.
 
+## Environment variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `MOEGIRL_MAX_LENGTH` | `6250` | Default `max_length` for `get_page` when the caller does not specify one. Useful for tuning per-deployment without forking the package. Invalid/non-positive values are ignored with a warning. |
+
 ## Configuration
 
 ### Claude Desktop
