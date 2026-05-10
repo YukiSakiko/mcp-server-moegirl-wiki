@@ -23,7 +23,7 @@ pip install mcp-server-moegirl-wiki
 
 ### `get_page(title: str, max_length: int = 1500)`
 
-返回 `{"title", "summary", "url", "page_id"}`——开篇段落纯文本，自动跟随重定向。
+返回 `{"title", "content", "url", "page_id"}`——条目纯文本全文（所有章节、模板已展开、链接已解析），自动跟随重定向。`content` 按 `max_length` 字符截断；深度查询时传更大值（如 8000）。
 
 ## 配置
 
@@ -66,7 +66,7 @@ uv run ruff check .
 
 ## 限制
 
-- `get_page` 仅返回开篇段落纯文本。完整 wikitext（`prop=revisions`、`action=parse`、`?action=raw`）被萌娘百科站点级 ACL 屏蔽给所有非特权用户组——实测 bot password 登录**也无法解锁**，只有 `sysop`/员工组可以调用这些 action。
+- `get_page` 返回的是渲染后纯文本（模板已展开、链接已解析）。原始 wikitext（`prop=revisions`、`action=parse`、`?action=raw`、`Special:Export`）被萌娘百科站点级 ACL 屏蔽——实测 bot password 登录**也无法解锁**，只有 `sysop`/员工组可以调用这些 action。
 - 使用 `mzh.moegirl.org.cn` 镜像。
 
 ## 许可证

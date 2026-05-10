@@ -66,17 +66,19 @@ async def search_moegirl(keyword: str, limit: int = 5) -> dict:
 
 
 @mcp.tool(
-    description="获取萌娘百科条目摘要（开篇段落，纯文本，自动跟随重定向）。"
+    description="获取萌娘百科条目的纯文本全文（所有章节、模板已展开、链接已解析、自动跟随重定向、按 max_length 截断）。"
 )
 async def get_page(title: str, max_length: int = 1500) -> dict:
-    """Fetch the intro paragraph of a Moegirl Wiki page.
+    """Fetch the plain-text rendering of a Moegirl Wiki page (all sections).
 
     Args:
         title: Page title.
-        max_length: Maximum characters returned in summary (default 1500).
+        max_length: Maximum characters returned in ``content`` (default 1500).
+            Pass a larger value (e.g. 8000) for in-depth queries; smaller for
+            quick "what is X" lookups.
 
     Returns:
-        On success: ``{"title", "summary", "url", "page_id"}``.
+        On success: ``{"title", "content", "url", "page_id"}``.
         On failure: ``{"error": "...", "title": title}``.
     """
     title = (title or "").strip()
@@ -89,7 +91,7 @@ async def get_page(title: str, max_length: int = 1500) -> dict:
 
     return {
         "title": page.title,
-        "summary": page.summary[:max_length],
+        "content": page.content[:max_length],
         "url": page.url,
         "page_id": page.page_id,
     }

@@ -23,7 +23,7 @@ Returns `{"results": [{"title", "url", "snippet"}, ...], "count": int}`.
 
 ### `get_page(title: str, max_length: int = 1500)`
 
-Returns `{"title", "summary", "url", "page_id"}` — intro plain text, follows redirects.
+Returns `{"title", "content", "url", "page_id"}` — full plain-text rendering of the page (all sections, templates expanded, links resolved). Auto-follows redirects. `content` is truncated to `max_length` characters; pass a larger value (e.g. 8000) for in-depth queries.
 
 ## Configuration
 
@@ -66,7 +66,7 @@ uv run ruff check .
 
 ## Limitations
 
-- `get_page` returns intro plain text only. Full wikitext (`prop=revisions`, `action=parse`, `?action=raw`) is blocked by Moegirl Wiki's site-wide ACL for all non-privileged user groups — empirically verified that bot-password login does **not** unlock it; only `sysop`/staff groups can call these actions.
+- `get_page` returns rendered plain text (templates expanded, links resolved). Raw wikitext (`prop=revisions`, `action=parse`, `?action=raw`, `Special:Export`) is blocked by Moegirl Wiki's site-wide ACL — empirically verified that bot-password login does **not** unlock it; only `sysop`/staff groups can call these actions.
 - Uses the `mzh.moegirl.org.cn` mirror.
 
 ## License

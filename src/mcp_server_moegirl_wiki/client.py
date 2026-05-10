@@ -22,7 +22,7 @@ import httpx
 
 API_BASE = "https://mzh.moegirl.org.cn/api.php"
 PAGE_BASE = "https://mzh.moegirl.org.cn/"
-USER_AGENT = "mcp-server-moegirl-wiki/0.1.0 (+https://github.com/XXXxx7258/mcp-server-moegirl-wiki)"
+USER_AGENT = "mcp-server-moegirl-wiki/0.2.0 (+https://github.com/XXXxx7258/mcp-server-moegirl-wiki)"
 DEFAULT_TIMEOUT = 10.0
 
 
@@ -41,10 +41,10 @@ class Candidate:
 
 @dataclass(slots=True)
 class PageSummary:
-    """A page's introductory summary."""
+    """A page's plain-text content (all sections, templates expanded, links resolved)."""
 
     title: str
-    summary: str
+    content: str
     url: str
     page_id: int | None = None
 
@@ -155,13 +155,19 @@ class MoegirlApiClient:
         return results
 
     async def fetch_page(self, title: str) -> PageSummary | None:
-        """Fetch the introductory plain text of a page. ``None`` if the page does not exist."""
+        """Fetch the full plain-text rendering of a page (all sections; templates
+        expanded; links resolved). Returns ``None`` if the page does not exist.
+
+        Note: Moegirl Wiki blocks ``prop=revisions``/``action=parse``/``?action=raw``
+        even for authenticated users, so raw wikitext is unavailable; this method
+        uses ``prop=extracts&explaintext=1`` which is the most complete content
+        path Moegirl exposes to non-privileged users.
+        """
         payload = await self._request({
             "action": "query",
             "prop": "extracts|info",
             "inprop": "url",
             "redirects": "1",
-            "exintro": "1",
             "explaintext": "1",
             "titles": title,
             "format": "json",
@@ -180,7 +186,7 @@ class MoegirlApiClient:
         resolved_title = str(page.get("title", title))
         return PageSummary(
             title=resolved_title,
-            summary=str(page.get("extract", "")),
+            content=str(page.get("extract", "")),
             url=str(page.get("fullurl") or _page_url(resolved_title)),
             page_id=page_id,
         )
