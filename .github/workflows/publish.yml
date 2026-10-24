@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "v*"
+  # 手动补发/重跑用。配合下面的 skip-existing，已存在的版本不会把流水线搞红。
+  workflow_dispatch:
 
 jobs:
   build-and-publish:
@@ -26,3 +28,6 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # 版本已在 PyPI 上时跳过而不是报错：重发 tag、手动补跑都安全。
+          skip-existing: true
