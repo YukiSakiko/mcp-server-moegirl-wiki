@@ -7,6 +7,8 @@
 
 [萌娘百科](https://zh.moegirl.org.cn/) 的 MCP 服务器。提供两个工具：搜索条目、获取条目摘要。
 
+需要 MCP Python SDK **2.x**（`mcp>=2,<3`）；仍停留在 `0.2.x` 的见[兼容性](#兼容性)。
+
 ## 安装
 
 ```bash
@@ -66,10 +68,18 @@ uv run pytest -m network
 uv run ruff check .
 ```
 
+## 兼容性
+
+| 服务器版本 | MCP Python SDK | 说明 |
+|---|---|---|
+| `0.3.x` | `mcp>=2,<3` | SDK 2.0 把 `FastMCP` 改名为 `mcp.server.mcpserver.MCPServer`，0.2.x 在 2.x 上无法启动。宿主侧客户端仍用 SDK 1.x 也能正常连——stdio 握手会协商出双方共有的协议版本（实测：1.29.1 客户端 ↔ 2.3.0 服务端）。 |
+| `0.2.x` | `mcp>=1.0` | 在 SDK 2.x 上启动即崩（`No module named 'mcp.server.fastmcp'`），这正是 `0.3.0` 修掉的问题。只有必须留在 0.2.x 时才需要 `mcp<2`。 |
+
 ## 限制
 
 - `get_page` 返回的是渲染后纯文本（模板已展开、链接已解析）。原始 wikitext（`prop=revisions`、`action=parse`、`?action=raw`、`Special:Export`）被萌娘百科站点级 ACL 屏蔽——实测 bot password 登录**也无法解锁**，只有 `sysop`/员工组可以调用这些 action。
 - 使用 `mzh.moegirl.org.cn` 镜像。
+- 代理变量走 `httpx` 的 `trust_env`。某些 `NO_PROXY` 写法对 curl 合法但 `httpx` 解析不了（例如 `::1` 与 `[::1]` 并存），此时服务端会打一条告警并改为直连，而不是让所有工具调用直接失败。
 
 ## 许可证
 

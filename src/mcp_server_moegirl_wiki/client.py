@@ -14,6 +14,7 @@ This client uses the API combinations that have been verified to work today:
 from __future__ import annotations
 
 import html
+import logging
 import re
 from dataclasses import dataclass
 from typing import Any
@@ -22,8 +23,10 @@ import httpx
 
 API_BASE = "https://mzh.moegirl.org.cn/api.php"
 PAGE_BASE = "https://mzh.moegirl.org.cn/"
-USER_AGENT = "mcp-server-moegirl-wiki/0.2.2 (+https://github.com/XXXxx7258/mcp-server-moegirl-wiki)"
+USER_AGENT = "mcp-server-moegirl-wiki/0.3.0 (+https://github.com/XXXxx7258/mcp-server-moegirl-wiki)"
 DEFAULT_TIMEOUT = 10.0
+
+logger = logging.getLogger(__name__)
 
 
 class MoegirlApiError(RuntimeError):
@@ -70,12 +73,32 @@ class MoegirlApiClient:
         self.base_url = base_url
         self.timeout = timeout
 
+    def _build_client(self) -> httpx.AsyncClient:
+        """Create the per-request ``httpx.AsyncClient``.
+
+        ``httpx`` reads proxy settings from the environment (``trust_env=True``) and
+        turns every ``NO_PROXY`` entry into a proxy mount at construction time.
+        Entries that are valid for curl but not for httpx — ``::1``, ``[::1]`` — make
+        ``urlparse`` raise ``InvalidURL: Invalid port`` *before* any request is sent,
+        which would otherwise break every tool call on such machines (common with
+        Clash/v2ray-style environment setups). Retry without environment proxies so a
+        malformed variable costs proxy support instead of the whole tool.
+        """
+        options: dict[str, Any] = {
+            "timeout": self.timeout,
+            "headers": {"User-Agent": USER_AGENT},
+            "follow_redirects": True,
+        }
+        try:
+            return httpx.AsyncClient(**options)
+        except httpx.InvalidURL as exc:
+            logger.warning(
+                "Ignoring malformed proxy environment (%s); issuing direct requests instead", exc
+            )
+            return httpx.AsyncClient(trust_env=False, **options)
+
     async def _request(self, params: dict[str, str]) -> Any:
-        async with httpx.AsyncClient(
-            timeout=self.timeout,
-            headers={"User-Agent": USER_AGENT},
-            follow_redirects=True,
-        ) as client:
+        async with self._build_client() as client:
             response = await client.get(self.base_url, params=params)
             response.raise_for_status()
             data = response.json()

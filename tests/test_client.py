@@ -27,7 +27,7 @@ async def test_fetch_page_returns_summary() -> None:
     page = await client.fetch_page("三角初华")
     assert page is not None, "fetch_page returned None for an existing page"
     assert page.title == "三角初华"
-    assert len(page.summary) > 50
+    assert len(page.content) > 50
     assert page.url.startswith("http")
 
 

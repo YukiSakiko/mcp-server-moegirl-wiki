@@ -7,6 +7,8 @@ English | [简体中文](README.zh-CN.md)
 
 MCP server for [萌娘百科 (Moegirl Wiki)](https://zh.moegirl.org.cn/). Two tools: search entries and fetch a page's intro.
 
+Requires the MCP Python SDK **2.x** (`mcp>=2,<3`); see [Compatibility](#compatibility) if you are still on `0.2.x`.
+
 ## Install
 
 ```bash
@@ -66,10 +68,18 @@ uv run pytest -m network
 uv run ruff check .
 ```
 
+## Compatibility
+
+| Server version | MCP Python SDK | Notes |
+|---|---|---|
+| `0.3.x` | `mcp>=2,<3` | SDK 2.0 renamed `FastMCP` to `mcp.server.mcpserver.MCPServer`, so 0.2.x could not run on it. Hosts whose *client* still uses SDK 1.x work fine — the stdio handshake negotiates a shared protocol version (verified: 1.29.1 client ↔ 2.3.0 server). |
+| `0.2.x` | `mcp>=1.0` | Crashes at startup on SDK 2.x (`No module named 'mcp.server.fastmcp'`). That is what `0.3.0` fixes; pin `mcp<2` only if you must stay on 0.2.x. |
+
 ## Limitations
 
 - `get_page` returns rendered plain text (templates expanded, links resolved). Raw wikitext (`prop=revisions`, `action=parse`, `?action=raw`, `Special:Export`) is blocked by Moegirl Wiki's site-wide ACL — empirically verified that bot-password login does **not** unlock it; only `sysop`/staff groups can call these actions.
 - Uses the `mzh.moegirl.org.cn` mirror.
+- Proxy variables are honoured via `httpx`'s `trust_env`. Some `NO_PROXY` values are valid for curl but unparseable for `httpx` (e.g. a bare `::1` next to `[::1]`); in that case the server logs a warning and issues direct requests instead of failing every tool call.
 
 ## License
 
